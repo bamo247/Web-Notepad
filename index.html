@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notepad</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="notepad-window">
+    <!-- A plain title bar gives the page the Windows Notepad. -->
+    <header class="title-bar">
+      <div class="title-left">
+        <input class="title-input" id="noteTitle" type="text" placeholder="Untitled note" aria-label="Note title">
+        <span class="title-suffix">Notepad</span>
+      </div>
+    </header>
+
+    <!-- Menu buttons hold the main actions, close to how desktop Notepad is organized. -->
+    <nav class="menu-bar" aria-label="Application menu">
+      <div class="menu-group">
+        <button class="menu-button" id="fileMenuButton" type="button" data-menu="fileMenu" aria-expanded="false" aria-controls="fileMenu">
+          File
+        </button>
+        <div class="menu-panel" id="fileMenu" role="menu" aria-labelledby="fileMenuButton">
+          <button class="menu-item" id="newNoteButton" type="button" role="menuitem">
+            <span>New</span>
+          </button>
+          <label class="menu-item file-picker-item" for="fileInput" role="menuitem" tabindex="0">
+            <span>Open...</span>
+          </label>
+          <button class="menu-item" id="downloadButton" type="button" role="menuitem">
+            <span>Download .txt</span>
+          </button>
+          <div class="menu-divider" aria-hidden="true"></div>
+          <button class="menu-item" id="toggleNotesButton" type="button" role="menuitem">
+            <span>Saved notes</span>
+          </button>
+          <button class="menu-item danger-menu-item" id="deleteButton" type="button" role="menuitem">
+            <span>Delete note</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <button class="menu-button" id="formatMenuButton" type="button" data-menu="formatMenu" aria-expanded="false" aria-controls="formatMenu">
+          Format
+        </button>
+        <div class="menu-panel format-panel" id="formatMenu" aria-labelledby="formatMenuButton">
+          <label class="control-field" for="fontFamily">
+            <span>Font</span>
+            <select id="fontFamily">
+              <option value="Consolas, 'Courier New', monospace">Consolas</option>
+              <option value="'Courier New', Courier, monospace">Courier New</option>
+              <option value="Arial, Helvetica, sans-serif">Arial</option>
+              <option value="Georgia, 'Times New Roman', serif">Georgia</option>
+              <option value="'Segoe UI', Arial, sans-serif">Segoe UI</option>
+              <option value="'Times New Roman', Times, serif">Times New Roman</option>
+            </select>
+          </label>
+
+          <div class="control-field">
+            <span>Font size</span>
+            <div class="stepper">
+              <button id="fontSizeDown" type="button" aria-label="Decrease font size">-</button>
+              <input id="fontSize" type="number" min="12" max="48" step="1" value="16" aria-label="Font size">
+              <button id="fontSizeUp" type="button" aria-label="Increase font size">+</button>
+            </div>
+          </div>
+
+          <label class="control-field color-field" for="backgroundColor">
+            <span>Background</span>
+            <input id="backgroundColor" type="color" value="#ffffff">
+          </label>
+
+          <button class="menu-action" id="resetAppearanceButton" type="button">Reset format</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- The real file input stays hidden so the File > Open item can trigger it cleanly. -->
+    <input id="fileInput" class="hidden-file" type="file" accept=".txt,.md,.markdown,.log,.csv,.json,.js,.html,.css">
+
+    <!-- The saved-notes pane opens only when the user asks for it from the File menu. -->
+    <section class="workspace">
+      <aside class="saved-notes-pane" id="savedNotesPane" aria-label="Saved notes" hidden>
+        <div class="pane-title-row">
+          <strong>Saved notes</strong>
+          <button id="closeNotesButton" type="button" aria-label="Close saved notes">x</button>
+        </div>
+        <input class="search-input" id="searchInput" type="search" placeholder="Search notes" aria-label="Search saved notes">
+        <ul class="note-list" id="noteList" aria-label="Saved notes list"></ul>
+      </aside>
+
+      <section class="editor-area" aria-label="Note editor">
+        <textarea id="noteBody" class="note-body" spellcheck="true" placeholder="Start typing..."></textarea>
+      </section>
+    </section>
+
+    <!-- Small status details live at the bottom, just like a lightweight desktop editor. -->
+    <footer class="status-bar">
+      <span id="statusText">Ready</span>
+      <span id="countText">0 words | 0 characters</span>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

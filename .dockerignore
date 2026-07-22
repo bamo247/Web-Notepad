@@ -1,0 +1,4 @@
+# Keep local project extras out of the tiny Nginx image.
+.git
+.DS_Store
+README.md

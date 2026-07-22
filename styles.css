@@ -1,0 +1,422 @@
+:root {
+  /* Shared colors keep the Notepad chrome calm and easy to tweak later. */
+  color-scheme: light;
+  --app-bg: #eef1f5;
+  --chrome: #f8f8f8;
+  --chrome-strong: #ededed;
+  --panel: #ffffff;
+  --text: #111111;
+  --muted: #626262;
+  --line: #d6d6d6;
+  --accent: #0067c0;
+  --accent-soft: #e5f1fb;
+  --danger: #b3261e;
+  --editor-bg: #ffffff;
+}
+
+* {
+  /* Border-box sizing makes the full-window layout more predictable. */
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--panel);
+  color: var(--text);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+select,
+input {
+  color: inherit;
+}
+
+.notepad-window {
+  /* Title, menus, editor, then status bar: the classic notepad stack. */
+  display: grid;
+  grid-template-rows: 36px 32px 1fr 26px;
+  width: 100vw;
+  height: 100vh;
+  min-height: 0;
+  background: var(--panel);
+  border: 0;
+  overflow: hidden;
+}
+
+.title-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.7rem;
+  background: var(--chrome);
+  border-bottom: 1px solid var(--line);
+  user-select: none;
+}
+
+.title-left {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.title-input {
+  width: min(42vw, 360px);
+  min-width: 96px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  padding: 0.15rem 0.25rem;
+  outline: none;
+}
+
+.title-input:focus {
+  background: #ffffff;
+  border-color: var(--accent);
+}
+
+.title-suffix {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.menu-bar {
+  /* The menus are text-first on purpose, matching old-school Notepad behavior. */
+  display: flex;
+  align-items: stretch;
+  gap: 0.15rem;
+  padding-left: 0.25rem;
+  background: var(--chrome);
+  border-bottom: 1px solid var(--line);
+}
+
+.menu-group {
+  position: relative;
+}
+
+.menu-button {
+  height: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0 0.85rem;
+  cursor: pointer;
+}
+
+.menu-button:hover,
+.menu-group.open .menu-button {
+  background: var(--accent-soft);
+}
+
+.menu-panel {
+  /* Menus float above the editor and close when the user clicks away. */
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  display: none;
+  min-width: 230px;
+  padding: 0.35rem;
+  background: #ffffff;
+  border: 1px solid #bdbdbd;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.menu-group.open .menu-panel {
+  display: block;
+}
+
+.menu-item,
+.file-picker-item,
+.menu-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  min-height: 30px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  padding: 0.35rem 0.55rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-item:hover,
+.file-picker-item:hover,
+.menu-action:hover {
+  background: var(--accent-soft);
+}
+
+.danger-menu-item {
+  color: var(--danger);
+}
+
+.menu-divider {
+  height: 1px;
+  margin: 0.35rem 0.25rem;
+  background: var(--line);
+}
+
+.format-panel {
+  min-width: 270px;
+  padding: 0.6rem;
+}
+
+.control-field {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.control-field select,
+.control-field input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #ffffff;
+  padding: 0.38rem 0.45rem;
+  color: var(--text);
+}
+
+.control-field select:focus,
+.control-field input:focus,
+.search-input:focus {
+  border-color: var(--accent);
+  outline: 2px solid rgba(0, 103, 192, 0.16);
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: 34px 1fr 34px;
+  gap: 0.35rem;
+}
+
+.stepper button {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--chrome);
+  cursor: pointer;
+}
+
+.stepper button:hover {
+  background: var(--accent-soft);
+}
+
+.color-field input {
+  height: 38px;
+  padding: 0.18rem;
+}
+
+.hidden-file {
+  /* Hide the browser file input but keep it accessible through its label. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.workspace {
+  /* The editor always keeps the full page; saved notes float above it when opened. */
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--editor-bg);
+}
+
+.saved-notes-pane {
+  /* Local notes float over the page instead of shrinking the writing area. */
+  position: absolute;
+  z-index: 10;
+  inset: 0 auto 0 0;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  width: 286px;
+  min-height: 0;
+  background: #fbfbfb;
+  box-shadow: 8px 0 20px rgba(0, 0, 0, 0.14);
+}
+
+.saved-notes-pane[hidden] {
+  display: none;
+}
+
+.pane-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.pane-title-row button {
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.2rem 0.45rem;
+}
+
+.pane-title-row button:hover {
+  background: var(--accent-soft);
+}
+
+.search-input {
+  width: calc(100% - 1rem);
+  margin: 0.55rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0.45rem 0.55rem;
+  outline: none;
+}
+
+.note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 0;
+  margin: 0;
+  padding: 0 0.5rem 0.6rem;
+  overflow: auto;
+  list-style: none;
+}
+
+.note-list li {
+  min-width: 0;
+}
+
+.note-item {
+  display: block;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  padding: 0.55rem 0.6rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.note-item:hover,
+.note-item.active {
+  border-color: #bed8ef;
+  background: var(--accent-soft);
+}
+
+.note-item-title {
+  display: block;
+  margin-bottom: 0.18rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-item-meta {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.empty-state {
+  color: var(--muted);
+  line-height: 1.45;
+  padding: 0.8rem 0.35rem;
+}
+
+.editor-area {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  background: var(--editor-bg);
+}
+
+.note-body {
+  /* This is the heart of the app: one full-page, distraction-free writing area. */
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  resize: none;
+  border: 0;
+  background: var(--editor-bg);
+  color: var(--text);
+  line-height: 1.55;
+  padding: 0.85rem;
+  outline: none;
+  white-space: pre-wrap;
+}
+
+.note-body:focus {
+  outline: none;
+}
+
+.status-bar {
+  /* Status text stays compact so it never competes with the writing space. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-width: 0;
+  padding: 0 0.75rem;
+  background: var(--chrome-strong);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+@media (max-width: 720px) {
+  /* On smaller screens the saved-notes list slides over the editor instead of shrinking it. */
+  .notepad-window {
+    grid-template-rows: 38px auto 1fr auto;
+  }
+
+  .menu-bar {
+    min-height: 34px;
+  }
+
+  .saved-notes-pane {
+    width: min(86vw, 320px);
+  }
+
+  .title-input {
+    width: 42vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-suffix {
+    display: none;
+  }
+
+  .format-panel {
+    left: -58px;
+  }
+
+  .status-bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.3rem 0.7rem;
+  }
+}
